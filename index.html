@@ -31,30 +31,58 @@
             src="https://forms.office.com/pages/responsepage.aspx?id=A5RGmG39-kCDTYS_dEotXujxWzQ4ditClY5NFLQ61ndUNkwxWkY0RjQ2RlZIQ09RNllFSVdNN0JPMS4u">
     </iframe>
 
-    <script>
-        // Disable external navigation
-        document.addEventListener('DOMContentLoaded', () => {
-            // Disable links inside the iframe
-            const iframe = document.querySelector('iframe');
-            iframe.onload = () => {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-    
-                // Disable all anchor (<a>) tag clicks
-                iframeDoc.addEventListener('click', (e) => {
-                    if (e.target.tagName === 'A') {
-                        e.preventDefault();
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const iframe = document.querySelector('iframe');
+        let inactivityTimeout; // Timer for detecting inactivity
+        let submissionTimeout; // Timer for returning after submission
+
+        const resetInactivityTimer = () => {
+            clearTimeout(inactivityTimeout); // Clear previous timer
+            inactivityTimeout = setTimeout(() => {
+                iframe.src = iframe.src; // Refresh the iframe
+            }, 120000); // 120 seconds of inactivity
+        };
+
+        iframe.onload = () => {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+
+            // Allow only the Submit button to work
+            iframeDoc.addEventListener('click', (e) => {
+                const tagName = e.target.tagName.toLowerCase();
+
+                // Allow only buttons or inputs with type="submit"
+                if (tagName === 'button' || tagName === 'input') {
+                    const type = e.target.getAttribute('type');
+                    if (type && type.toLowerCase() === 'submit') {
+                        // Start timer to return to form after submission
+                        clearTimeout(submissionTimeout);
+                        submissionTimeout = setTimeout(() => {
+                            iframe.src = iframe.src; // Reload the form
+                        }, 15000); // 15 seconds after submission
+                        return; // Allow the Submit button to function
                     }
-                });
-            };
-    
-            // Disable keyboard shortcuts for navigation
-            document.addEventListener('keydown', (e) => {
-                if (e.ctrlKey || e.metaKey) {
-                    e.preventDefault(); // Disable shortcuts like Ctrl+T, Ctrl+N
                 }
+
+                // Prevent any other clicks
+                e.preventDefault();
             });
-        });
-    </script>
+
+            // Reset inactivity timer on any input activity
+            iframeDoc.addEventListener('input', resetInactivityTimer);
+            iframeDoc.addEventListener('mousemove', resetInactivityTimer);
+            iframeDoc.addEventListener('keydown', resetInactivityTimer);
+        };
+
+        // Reset inactivity timer on parent document interactions
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keydown', resetInactivityTimer);
+
+        // Start the inactivity timer initially
+        resetInactivityTimer();
+    });
+</script>
+
     
 </body>
 </html>
