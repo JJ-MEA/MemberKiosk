@@ -80,19 +80,20 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const refreshButton = document.getElementById('refreshButton');
         const startUrl = "https://jj-mea.github.io/MemberKiosk/index.html"; // Hardcoded start URL
+        const iframe = document.querySelector('iframe');
+        const refreshButton = document.getElementById('refreshButton');
         let inactivityTimeout; // Timer for detecting inactivity
         let submissionTimeout; // Timer for returning after submission
 
-        // Function to redirect the entire page to the start URL
+        // Function to redirect the entire app to the start URL
         const redirectToStart = () => {
-            window.location.href = startUrl; // Reload the entire app to the start URL
+            window.location.href = startUrl; // Redirect to the start URL
         };
 
         // Add event listener to the refresh button
         refreshButton.addEventListener('click', () => {
-            redirectToStart(); // Redirect to the start URL when the button is clicked
+            redirectToStart(); // Redirect to the start URL when clicked
         });
 
         // Reset inactivity timer
@@ -101,34 +102,32 @@
             inactivityTimeout = setTimeout(redirectToStart, 120000); // 120 seconds of inactivity
         };
 
-        // Intercept iframe interactions
-        const iframe = document.querySelector('iframe');
         iframe.onload = () => {
             const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-            // Intercept all clicks inside the iframe
+            // Intercept all link clicks inside the iframe
             iframeDoc.addEventListener('click', (e) => {
                 const tagName = e.target.tagName.toLowerCase();
 
-                // Allow only Submit buttons or inputs
+                // Allow only the Submit button to function
                 if (tagName === 'button' || tagName === 'input') {
                     const type = e.target.getAttribute('type');
                     if (type && type.toLowerCase() === 'submit') {
-                        // Start timer to return to the start URL after submission
+                        // Allow Submit button functionality
                         clearTimeout(submissionTimeout);
                         submissionTimeout = setTimeout(redirectToStart, 15000); // 15 seconds after submission
-                        return; // Allow the Submit button to function
+                        return;
                     }
                 }
 
-                // For all other links, redirect back to the start URL
+                // If a link is clicked, redirect to the start URL
                 if (tagName === 'a') {
-                    e.preventDefault(); // Stop the default behavior
+                    e.preventDefault(); // Prevent navigation
                     redirectToStart(); // Redirect to the start URL
                 }
             });
 
-            // Reset inactivity timer on any input activity
+            // Reset inactivity timer on any interaction inside the iframe
             iframeDoc.addEventListener('input', resetInactivityTimer);
             iframeDoc.addEventListener('mousemove', resetInactivityTimer);
             iframeDoc.addEventListener('keydown', resetInactivityTimer);
@@ -142,6 +141,7 @@
         resetInactivityTimer();
     });
 </script>
+
 
 </body>
 </html>
