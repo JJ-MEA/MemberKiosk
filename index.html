@@ -78,61 +78,63 @@
         src="https://forms.office.com/pages/responsepage.aspx?id=A5RGmG39-kCDTYS_dEotXujxWzQ4ditClY5NFLQ61ndUNkwxWkY0RjQ2RlZIQ09RNllFSVdNN0JPMS4u">
     </iframe>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const iframe = document.querySelector('iframe');
-            const refreshButton = document.getElementById('refreshButton');
-            let inactivityTimeout; // Timer for detecting inactivity
-            let submissionTimeout; // Timer for returning after submission
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const iframe = document.querySelector('iframe');
+        const startUrl = iframe.src; // Use the iframe's initial URL as the start URL
+        let inactivityTimeout; // Timer for detecting inactivity
+        let submissionTimeout; // Timer for returning after submission
 
-            // Function to refresh the iframe
-            const refreshIframe = () => {
-                iframe.src = iframe.src;
-            };
+        // Function to redirect the iframe to the start URL
+        const redirectToStart = () => {
+            iframe.src = startUrl; // Reset iframe to the initial URL
+        };
 
-            // Add event listener to the refresh button
-            refreshButton.addEventListener('click', refreshIframe);
+        // Reset inactivity timer
+        const resetInactivityTimer = () => {
+            clearTimeout(inactivityTimeout); // Clear previous timer
+            inactivityTimeout = setTimeout(redirectToStart, 120000); // 120 seconds of inactivity
+        };
 
-            const resetInactivityTimer = () => {
-                clearTimeout(inactivityTimeout); // Clear previous timer
-                inactivityTimeout = setTimeout(refreshIframe, 120000); // 120 seconds of inactivity
-            };
+        iframe.onload = () => {
+            const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
 
-            iframe.onload = () => {
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+            // Intercept all clicks inside the iframe
+            iframeDoc.addEventListener('click', (e) => {
+                const tagName = e.target.tagName.toLowerCase();
 
-                // Allow only the Submit button to work
-                iframeDoc.addEventListener('click', (e) => {
-                    const tagName = e.target.tagName.toLowerCase();
-
-                    // Allow only buttons or inputs with type="submit"
-                    if (tagName === 'button' || tagName === 'input') {
-                        const type = e.target.getAttribute('type');
-                        if (type && type.toLowerCase() === 'submit') {
-                            // Start timer to return to form after submission
-                            clearTimeout(submissionTimeout);
-                            submissionTimeout = setTimeout(refreshIframe, 15000); // 15 seconds after submission
-                            return; // Allow the Submit button to function
-                        }
+                // Allow only Submit buttons or inputs
+                if (tagName === 'button' || tagName === 'input') {
+                    const type = e.target.getAttribute('type');
+                    if (type && type.toLowerCase() === 'submit') {
+                        // Start timer to return to the start URL after submission
+                        clearTimeout(submissionTimeout);
+                        submissionTimeout = setTimeout(redirectToStart, 15000); // 15 seconds after submission
+                        return; // Allow the Submit button to function
                     }
+                }
 
-                    // Prevent any other clicks
-                    e.preventDefault();
-                });
+                // For all other links, redirect back to the start URL
+                if (tagName === 'a') {
+                    e.preventDefault(); // Stop the default behavior
+                    redirectToStart(); // Redirect to the start URL
+                }
+            });
 
-                // Reset inactivity timer on any input activity
-                iframeDoc.addEventListener('input', resetInactivityTimer);
-                iframeDoc.addEventListener('mousemove', resetInactivityTimer);
-                iframeDoc.addEventListener('keydown', resetInactivityTimer);
-            };
+            // Reset inactivity timer on any input activity
+            iframeDoc.addEventListener('input', resetInactivityTimer);
+            iframeDoc.addEventListener('mousemove', resetInactivityTimer);
+            iframeDoc.addEventListener('keydown', resetInactivityTimer);
+        };
 
-            // Reset inactivity timer on parent document interactions
-            document.addEventListener('mousemove', resetInactivityTimer);
-            document.addEventListener('keydown', resetInactivityTimer);
+        // Reset inactivity timer on parent document interactions
+        document.addEventListener('mousemove', resetInactivityTimer);
+        document.addEventListener('keydown', resetInactivityTimer);
 
-            // Start the inactivity timer initially
-            resetInactivityTimer();
-        });
-    </script>
+        // Start the inactivity timer initially
+        resetInactivityTimer();
+    });
+</script>
+
 </body>
 </html>
