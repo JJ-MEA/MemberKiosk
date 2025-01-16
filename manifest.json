@@ -2,7 +2,7 @@
     "name": "Office Form PWA",
     "short_name": "FormPWA",
     "description": "A Progressive Web App to display an embedded Office Form optimized for iPad.",
-    "start_url": "/index.html",
+    "start_url": "/MemberKiosk/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#0078d4",
