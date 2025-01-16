@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Office Form Embed</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="formIframe" 
+            src="https://forms.office.com/pages/responsepage.aspx?id=A5RGmG39-kCDTYS_dEotXujxWzQ4ditClY5NFLQ61ndUNkwxWkY0RjQ2RlZIQ09RNllFSVdNN0JPMS4u">
+    </iframe>
+
+    <script>
+        // Disable hyperlinks inside the iframe
+        const iframe = document.getElementById("formIframe");
+        iframe.onload = function () {
+            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
+
+            // Wait until iframe content is loaded
+            iframeDocument.addEventListener('click', (event) => {
+                if (event.target.tagName === 'A') {
+                    event.preventDefault(); // Prevent hyperlink click
+                }
+            });
+        };
+    </script>
+</body>
+</html>
