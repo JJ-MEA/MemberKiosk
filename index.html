@@ -81,6 +81,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         const iframe = document.querySelector('iframe');
+        const refreshButton = document.getElementById('refreshButton');
         const startUrl = "https://jj-mea.github.io/MemberKiosk/index.html"; // Hardcoded start URL
         let inactivityTimeout; // Timer for detecting inactivity
         let submissionTimeout; // Timer for returning after submission
@@ -89,6 +90,11 @@
         const redirectToStart = () => {
             iframe.src = startUrl; // Reset iframe to the initial URL
         };
+
+        // Add event listener to the refresh button
+        refreshButton.addEventListener('click', () => {
+            redirectToStart(); // Redirect to the start URL when the button is clicked
+        });
 
         // Reset inactivity timer
         const resetInactivityTimer = () => {
@@ -135,6 +141,7 @@
         resetInactivityTimer();
     });
 </script>
+
 
 </body>
 </html>
