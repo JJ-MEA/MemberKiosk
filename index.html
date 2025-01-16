@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#0078d4">
+    <link rel="manifest" href="manifest.json">
     <title>Office Form Embed</title>
     <style>
         body, html {
@@ -24,18 +28,29 @@
     </iframe>
 
     <script>
-        // Disable hyperlinks inside the iframe
-        const iframe = document.getElementById("formIframe");
-        iframe.onload = function () {
-            const iframeDocument = iframe.contentDocument || iframe.contentWindow.document;
-
-            // Wait until iframe content is loaded
-            iframeDocument.addEventListener('click', (event) => {
-                if (event.target.tagName === 'A') {
-                    event.preventDefault(); // Prevent hyperlink click
+        // Disable external navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            // Disable links inside the iframe
+            const iframe = document.querySelector('iframe');
+            iframe.onload = () => {
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    
+                // Disable all anchor (<a>) tag clicks
+                iframeDoc.addEventListener('click', (e) => {
+                    if (e.target.tagName === 'A') {
+                        e.preventDefault();
+                    }
+                });
+            };
+    
+            // Disable keyboard shortcuts for navigation
+            document.addEventListener('keydown', (e) => {
+                if (e.ctrlKey || e.metaKey) {
+                    e.preventDefault(); // Disable shortcuts like Ctrl+T, Ctrl+N
                 }
             });
-        };
+        });
     </script>
+    
 </body>
 </html>
