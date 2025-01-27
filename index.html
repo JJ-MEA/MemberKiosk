@@ -67,8 +67,8 @@
 <body>
     <!-- Header Section -->
     <header>
-        <h1>Test Header</h1>
-        <a href="https://www.mea.coop" target="_blank" rel="noopener noreferrer">Visit MEA</a>
+        <h1>Welcome to MEA</h1>
+        <a id="testurl" href="https://www.mea.coop" target="_blank" rel="noopener noreferrer">Visit MEA</a>
         <button id="refreshButton">Refresh Form</button>
     </header>
 
@@ -115,13 +115,13 @@
                         if (type && type.toLowerCase() === 'submit') {
                             // Allow Submit button functionality
                             clearTimeout(submissionTimeout);
-                            submissionTimeout = setTimeout(redirectToStart, 5000); // 5 seconds after submission
+                            submissionTimeout = setTimeout(redirectToStart, 2000); // 2 seconds after submission
                             return;
                         }
                     }
 
                     // If a link is clicked, redirect to the start URL
-                    if (tagName === 'a') {
+                    if (tagname === 'a') {
                         e.preventDefault(); // Prevent navigation
                         redirectToStart(); // Redirect to the start URL
                     }
